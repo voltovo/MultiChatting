@@ -4,4 +4,4 @@ MultiChatting
 * Link:[네트워크 이해](network.md)
 
 ## MultiChatting CheckPoint
-* Link:[CheckPoint](CheckPoint.md)
+* Link:[CheckPoint](checkPoint.md)
