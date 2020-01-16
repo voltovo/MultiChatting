@@ -2,6 +2,7 @@ package Multi_Chatting;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -199,6 +200,34 @@ public class ServerExample extends Application {
 		
 		//데이터를 보내기 위해
 		void send(String data) {
+			
+			Runnable runnable = new Runnable() {
+				
+				@Override
+				public void run() {
+					try {
+						byte[] byteArr = data.getBytes("UTF-8");
+						OutputStream outputStream = socket.getOutputStream();
+						outputStream.write(byteArr);
+						outputStream.flush();
+					} catch (Exception e) {
+						try {
+							String message = "[클라이언트 통신 안됨: " + 
+											socket.getRemoteSocketAddress() + ": " + 
+											Thread.currentThread().getName() + " ]";
+							
+							Platform.runLater(()->displayText(message));
+							connections.remove(Client.this);
+							socket.close();
+						} catch (Exception e2) {
+						}
+					}
+					
+				}
+			};
+			
+			//스레드풀의 작업 스레드에서 연결 수락 작업을 처리하기 위해 submit() 호출
+			executorService.submit(runnable);
 			
 		}
 	}
