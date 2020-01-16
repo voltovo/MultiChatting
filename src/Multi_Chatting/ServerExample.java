@@ -3,6 +3,7 @@ package Multi_Chatting;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
@@ -88,7 +89,38 @@ public class ServerExample extends Application {
 	
 	//서버 종료 코드
 	void stopServer() {
-		
+		try {
+			//connections 컬렉션으로부터 반복자를 얻어낸다
+			Iterator<Client> iterator = connections.iterator();
+			
+			while(iterator.hasNext()) {
+				//Client를 하나씩 얻는다
+				Client client = iterator.next();
+				//Client가 가지고 있는 Socket을 닫는다
+				client.socket.close();
+				//connections 컬렉션에서 Client를 제거 한다
+				iterator.remove();
+			}
+			
+			//serverSocket 닫기
+			if(serverSocket != null && !serverSocket.isClosed()) {
+				serverSocket.close();
+			}
+			
+			//executorService 종료
+			if(executorService != null && !executorService.isShutdown()) {
+				executorService.isShutdown();
+			}
+			
+			//작업 스레드는 UI를 변경하지 못하므로 Platform.runLater() 사용
+			Platform.runLater(()->{
+				displayText("[서버 멈춤]");
+				//stop 버튼의 글자를 start로 변경
+				btnStartStop.setText("start");
+			});
+		} catch (Exception e) {
+			
+		}
 	}
 	
 	
