@@ -58,13 +58,25 @@ public class ServerExample extends Application {
 										" : " + Thread.currentThread().getName() + " ]";
 						//메세지 출력하도록 displayText() 호출
 						Platform.runLater(()->displayText(message));
+						
+						//Client 객체 생성
+						Client client = new Client(socket);
+						//Client 객체를 connections 컬렉션에 추가한다
+						connections.add(client);
+						//connections 컬렉션에 저장된 Client 객체 수를 출력하도록 displayText() 호출
+						Platform.runLater(()->displayText("[연결 개수: " + connections.size() + " ]"));
 					} catch (Exception e) {
-						// TODO: handle exception
+						if(!serverSocket.isClosed()) {
+							stopServer();
+						}
+						break;
 					}
 				}
 					
 				}
 			};
+			//스레드풀의 작업 스레드에서 연결 수락 작업을 처리하기 위해 submit() 호출
+			executorService.submit(runnable);
 		} catch (Exception e) {
 			if(!serverSocket.isClosed()) {
 				stopServer();
