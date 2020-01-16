@@ -1,5 +1,7 @@
 package Multi_Chatting;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -126,7 +128,79 @@ public class ServerExample extends Application {
 	
 	//데이터 통신 코드
 	class Client {
+		Socket socket;
 		
+		//Client 생성자 선언
+		Client(Socket socket){
+			this.socket = socket;
+			receive();
+		}
+		
+		//데이터를 받기 위해
+		void receive() {
+			//받기 위해 runnable 정의
+			Runnable runnable = new Runnable() {
+				//run() 재정의
+				@Override
+				public void run() {
+					try {
+						while(true) {
+							//받은 데이터를 저장할 byte[]배열인 byteArr 생성
+							byte[] byteArr = new byte[100];
+							//socket으로 부터 inputStream 얻기
+							InputStream inputStream = socket.getInputStream();
+							
+							//클라이언트가 데이터를 보내기 전까지 블로킹, 데이터를 받으면 byteArr에 저장한 후 받은 
+							//바이트 개수를 readByteCnt에 저장
+							int readByteCnt = inputStream.read(byteArr);
+							
+							//클라이언트가 정상적으로 Socket의 close()를 호출 했을 경우,
+							//read()메소드는 -1을 리턴, 이 경우 강제 IOException 발생
+							if(readByteCnt == -1) {
+								throw new IOException();
+							}
+							
+							//정상적으로 데이터 받았을 경우 
+							String message = "[요청 처리 : " + socket.getRemoteSocketAddress() + 
+									": " + Thread.currentThread().getName() + " ]";
+							
+							//문자열 출력
+							Platform.runLater(()->displayText(message));
+							
+							//UTF-8로 디코딩한 문자열 얻기
+							String data = new String(byteArr, 0, readByteCnt, "UTF-8");
+							
+							//문자열을 모든 클라이언트에게 보내기 위해 connections 에 저장된 Client를 하나씩 얻어 send() 메소드 호출
+							for(Client client : connections) {
+								client.send(data);
+							}
+						}
+					} catch (Exception e) {
+						try {
+							//예외가 발생하면 connections 컬렉션에서 Client 객체 제거
+							connections.remove(Client.this);
+							
+							String message = "[클라이언트 통신 안됨 : " + 
+											socket.getRemoteSocketAddress() +
+											": " + Thread.currentThread().getName() + " ]";
+							//문자열 출력
+							Platform.runLater(()->displayText(message));
+							//socket 닫는다
+							socket.close();
+						} catch (Exception e2) {
+							// TODO: handle exception
+						}
+					}
+				}
+			};
+			//스레드풀의 작업 스레드에서 연결 수락 작업을 처리하기 위해 submit() 호출
+			executorService.submit(runnable);
+		}
+		
+		//데이터를 보내기 위해
+		void send(String data) {
+			
+		}
 	}
 
 
