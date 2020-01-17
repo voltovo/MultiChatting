@@ -206,18 +206,24 @@ public class ServerExample extends Application {
 				@Override
 				public void run() {
 					try {
+						//보낼 문자열로부터 UTF-8로인토딩한 바이트 배열을 얻는다
 						byte[] byteArr = data.getBytes("UTF-8");
+						//소켓에서 출력스트림을 얻는다
 						OutputStream outputStream = socket.getOutputStream();
+						//바이트 배열을 매개값으로 해서 write() 호출
 						outputStream.write(byteArr);
+						//출력 스트림의 내부 버퍼를 완전히 비우도록 flush() 호출
 						outputStream.flush();
 					} catch (Exception e) {
 						try {
+							//예외처리
 							String message = "[클라이언트 통신 안됨: " + 
 											socket.getRemoteSocketAddress() + ": " + 
 											Thread.currentThread().getName() + " ]";
-							
 							Platform.runLater(()->displayText(message));
+							//connections 컬렉션에서 예외가 발생한 client를 제거
 							connections.remove(Client.this);
+							socket을 닫는다
 							socket.close();
 						} catch (Exception e2) {
 						}
