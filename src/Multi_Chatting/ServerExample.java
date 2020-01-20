@@ -16,6 +16,10 @@ import com.sun.security.ntlm.Client;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 //javaFx 메인 클래스로 만들기 위해서 Application 상속 받는다 
@@ -223,7 +227,7 @@ public class ServerExample extends Application {
 							Platform.runLater(()->displayText(message));
 							//connections 컬렉션에서 예외가 발생한 client를 제거
 							connections.remove(Client.this);
-							socket을 닫는다
+							//socket을 닫는다
 							socket.close();
 						} catch (Exception e2) {
 						}
@@ -238,5 +242,22 @@ public class ServerExample extends Application {
 		}
 	}
 
-
+	TextArea txtDisplay;
+	Button btnStartStop;
+	
+	@Override
+	public void start(Stage primaryStage)throws Exception {
+		BorderPane root = new BorderPane();
+		root.setPrefSize(500, 300);
+		
+		txtDisplay = new TextArea();
+		txtDisplay.setEditable(false);
+		BorderPane.setMargin(txtDisplay, new Insets(0,0,2,0));
+		root.setCenter(txtDisplay);
+		
+		btnStartStop = new Button("start");
+		btnStartStop.setPrefHeight(30);
+		btnStartStop.setMaxWidth(Double.MAX_VALUE);
+	}
 }
+
