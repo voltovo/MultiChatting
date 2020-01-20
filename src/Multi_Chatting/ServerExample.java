@@ -17,6 +17,7 @@ import com.sun.security.ntlm.Client;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
@@ -258,6 +259,35 @@ public class ServerExample extends Application {
 		btnStartStop = new Button("start");
 		btnStartStop.setPrefHeight(30);
 		btnStartStop.setMaxWidth(Double.MAX_VALUE);
+		
+		//start와 stop 버튼을 클릭했을 때 이벤트 처리 코드
+		btnStartStop.setOnAction(e->{
+			if(btnStartStop.getText().equals("start")) {
+				startServer();
+			}
+			else if(btnStartStop.getText().equals("stop")) {
+				stopServer();
+			}
+		});
+		
+		root.setBottom(btnStartStop);
+		
+		Scene scene = new Scene(root);
+		scene.getStylesheets().add(getClass().getResource("app.css").toString());
+		primaryStage.setScene(scene);
+		primaryStage.setTitle("Server");
+		//윈도우 우측 상단 닫기 버튼을 클릭했을 때 이벤트 처리 코드
+		primaryStage.setOnCloseRequest(event->stopServer());
+		primaryStage.show();
+	}
+	
+	//작업 스레드의 작업 처리 내용을 출력할 때 호출하는 메소드
+	void displayText(String text) {
+		txtDisplay.appendText(text + "\n");
+	}
+	
+	public static void main(String[] args) {
+		launch(args);
 	}
 }
 
