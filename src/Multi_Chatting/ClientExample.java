@@ -2,6 +2,7 @@ package Multi_Chatting;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
@@ -109,6 +110,34 @@ public class ClientExample extends Application{
 				break;
 			}
 		}
+	}
+	
+	void send(String data) {
+		//데이터를 서버로 보내는 스레드 생성
+		Thread thread = new Thread() {
+			
+			@Override
+			public void run() {
+				try {
+					//보낼 문자열로부터 UTF-8 로 인코딩한 바이트 배열을 얻는다
+					byte[] byteArr = data.getBytes("UTF-8");
+					//socket에서 출력 스트림 얻는다
+					OutputStream outputStream = socket.getOutputStream();
+					//바이트 배열을 매개값으로 해서 write()메소드를 호출
+					outputStream.write(byteArr);
+					//출력 스트림의 내부 버퍼를 완전히 비우도록 flush 호출
+					outputStream.flush();
+					
+					Platform.runLater(()->displayText("[보내기 완료]"));
+					
+				} catch (Exception e) {
+					Platform.runLater(()->displayText("[서버 통신 안됨]"));
+					stopClient();
+				}
+			}
+		};
+		//작업 스레드 시작
+		thread.start();
 	}
 	TextArea txtDisplay;
 	TextField txtInput;
