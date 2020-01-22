@@ -158,7 +158,7 @@ public class ClientExample extends Application{
 		txtInput.setPrefSize(60, 30);
 		BorderPane.setMargin(txtInput, new Insets(0,1,1,1));
 		
-		btnConn = new Button("Start");
+		btnConn = new Button("start");
 		btnConn.setPrefSize(60, 30);
 		
 		//start 와 stop 버튼을 클릭했을 때 이벤트 처리 코드
