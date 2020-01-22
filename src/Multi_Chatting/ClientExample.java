@@ -30,7 +30,7 @@ public class ClientExample extends Application{
 				try {
 					//소켓 생성 및 연결 요청
 					socket = new Socket();
-					//localhost 5001 포트로 연결 요청
+					//localhost 5001 포트로 연결 요청 , 즉 서버로 연결
 					socket.connect(new InetSocketAddress("localhost", 5001));
 					
 					//작업 스레드는 UI를 변경하지 못하므로 Platform.runLater()가 사용
